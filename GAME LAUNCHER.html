@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Game Launcher</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #1a1a1a;
+      color: #f0f0f0;
+    }
+
+    header {
+      background-color: #111;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+      color: #ff3c00;
+    }
+
+    header img {
+      width: 150px;
+      margin-top: 10px;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    nav ul li a {
+      color: #aaa;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #fff;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+      padding: 40px;
+    }
+
+    .game-card {
+      background-color: #2a2a2a;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.3s;
+    }
+
+    .game-card:hover {
+      transform: scale(1.03);
+    }
+
+    .game-card img {
+      width: 100%;
+      height: auto;
+    }
+
+    .game-card h2 {
+      padding: 10px 20px 0;
+      font-size: 1.5em;
+      color: #ff5f1f;
+    }
+
+    .game-card p {
+      padding: 10px 20px;
+      font-size: 1em;
+      color: #ccc;
+    }
+
+    .game-card button {
+      margin: 10px 20px 20px;
+      padding: 10px 20px;
+      background-color: #ff3c00;
+      border: none;
+      color: white;
+      font-size: 1em;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .game-card button:hover {
+      background-color: #e63200;
+    }
+
+    #game-viewer {
+      display: none;
+      position: relative;
+      height: 100vh;
+      width: 100%;
+    }
+
+    #game-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    #back-button {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background-color: #ff3c00;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 9999;
+    }
+
+    #back-button:hover {
+      background-color: #e63200;
+    }
+
+    footer {
+      background-color: #111;
+      padding: 20px;
+      text-align: center;
+      color: #aaa;
+    }
+
+    footer p {
+      margin: 0;
+    }
+
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #333;
+    }
+
+    .login-box {
+      background-color: #444;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      width: 300px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 6px;
+      background-color: #222;
+      color: #fff;
+      font-size: 1em;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 10px;
+      background-color: #ff3c00;
+      border: none;
+      color: white;
+      font-size: 1em;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .login-box button:hover {
+      background-color: #e63200;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="login-screen" class="login-container">
+    <div class="login-box">
+      <h2>Login</h2>
+      <input type="password" id="password" placeholder="Passwort" />
+      <button onclick="login()">Einloggen</button>
+    </div>
+  </div>
+
+  <div id="app" style="display:none;">
+    <header>
+      <img src="https://th.bing.com/th/id/OIP.uSTZLdlo25FJrAvdpxynFwHaHa?rs=1&pid=ImgDetMain" alt="">
+      <h1>🔥 Game Launcher</h1>
+      <nav>
+        <ul>
+          <li><a href="#" onclick="logout()">Ausloggen</a></li>
+          <li><a href="#" onclick="showGames()">Spiele</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="games-grid" id="menu" style="display: none;">
+      <div class="game-card">
+        <h2>Moto X3M</h2>
+        <p>Erlebe adrenalingeladene Motorrad-Stunts!</p>
+        <button onclick="openGame('https://html5.gamedistribution.com/5b0abd4c0faa4f5eb190a9a16d5a1b4c/?gd_sdk_referrer_url=https%3A%2F%2Fwww.1001spiele.at%2Fg%2Fmoto-x3m')">Starten</button>
+      </div>
+
+      <div class="game-card">
+        <h2>Paper.io</h2>
+        <p>Kontrolliere dein Gebiet und besiege andere Spieler!</p>
+        <button onclick="openGame('https://html5.gamedistribution.com/c5d4966b176246748d6c847103ebfd51/?gd_sdk_referrer_url=https%3A%2F%2Fwww.1001spiele.at%2Fg%2Fpaper-io-2')">Starten</button>
+      </div>
+
+      <div class="game-card">
+        <h2>Subway Surfers</h2>
+        <p>Springe und rolle durch die U-Bahn-Strecken!</p>
+        <button onclick="openGame('https://subway-surfers.org/world-tour/')">Starten</button>
+      </div>
+
+      <div class="game-card">
+        <h2>Geometry Dash</h2>
+        <p>Überwinde rhythmische Hindernisse im Takt der Musik!</p>
+        <button onclick="openGame('https://html5.gamedistribution.com/9ee26ba4405c456094c70af7dc31a524/?gd_sdk_referrer_url=https%3A%2F%2Fwww.1001spiele.at%2Fg%2Fgeometry-arrow')">Starten</button>
+      </div>
+
+      <div class="game-card">
+        <h2>Helix Jump</h2>
+        <p>Springe durch die labyrinthartigen Turmspiralen!</p>
+        <button onclick="openGame('https://html5.gamedistribution.com/544cf55c6ad44a3299099e813f7f5a9d/?gd_sdk_referrer_url=https%3A%2F%2Fwww.1001spiele.at%2Fg%2Fhelix-jump')">Starten</button>
+      </div>
+
+      <div class="game-card">
+        <h2>Hole.io</h2>
+        <p>Verschlinge die Welt und wachse immer größer!</p>
+        <button onclick="openGame('https://html5.gamedistribution.com/bf10577cd0644646a2a0152fe3b4d586/?gd_sdk_referrer_url=https%3A%2F%2Fwww.1001spiele.at%2Fg%2Fhole-io')">Starten</button>
+      </div>
+
+<div class="game-card">
+        <h2>block blast</h2>
+        <p>Knacke die Blöcke und erlebe spaßige Explosionen!</p>
+        <button onclick="openGame('https://blockblast.org/1.embed')">Starten</button>
+      </div>
+
+<div class="game-card">
+        <h2>feuer & wasser</h2>
+        <p>spiele mit freunden feuer & wasser!</p>
+        <button onclick="openGame('https://html5.gamedistribution.com/56da8a54fe204845b34ccff750d4a60b/?gd_sdk_referrer_url=https%3A%2F%2Fwww.1001spiele.de%2Fabenteuer%2Ffireboy-and-watergirl-6-fairy-tales')">Starten</button>
+      </div>
+      
+<div class="game-card">
+        <h2>chatgpt</h2>
+        <p>ki ist alles</p>
+        <button onclick="openGame('chatgpt.com')">Starten</button>
+      </div>
+      
+<div class="game-card">
+        <h2>youtube</h2>
+        <p>gucke video und habe spaß</p>
+        <button onclick="openGame('youtube.com')">Starten</button>
+      </div>
+            
+<div class="game-card">
+        <h2>google</h2>
+        <p>suche und informiren</p>
+        <button onclick="openGame('google.com')">Starten</button>
+      </div>
+    </main>
+
+    <div id="game-viewer" style="display: none;">
+      <button id="back-button" onclick="closeGame()">⬅ Zurück</button>
+      <iframe id="game-iframe" src=""></iframe>
+    </div>
+  </div>
+
+  <script>
+    const correctPassword = "noel1";
+    let loggedIn = false;
+
+    function login() {
+      const password = document.getElementById("password").value;
+      if (password === correctPassword) {
+        loggedIn = true;
+        document.getElementById("login-screen").style.display = "none";
+        document.getElementById("app").style.display = "block";
+        showGames();
+      } else {
+        alert("Falsches Passwort!");
+      }
+    }
+
+    function logout() {
+      loggedIn = false;
+      document.getElementById("login-screen").style.display = "flex";
+      document.getElementById("app").style.display = "none";
+    }
+
+    function showGames() {
+      document.getElementById("menu").style.display = "grid";
+    }
+
+    function openGame(url) {
+      document.getElementById('menu').style.display = 'none';
+      document.getElementById('game-viewer').style.display = 'block';
+      document.getElementById('game-iframe').src = url;
+    }
+
+    function closeGame() {
+      document.getElementById('game-iframe').src = '';
+      document.getElementById('game-viewer').style.display = 'none';
+      document.getElementById('menu').style.display = 'grid';
+    }
+  </script>
+
+<footer>
+  <p>🎮 Von Noel – seit 2025</p>
+</footer>
+
+</body>
+</html>
+
+
