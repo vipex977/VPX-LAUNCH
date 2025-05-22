@@ -1,2 +1,2 @@
 # VPX-LAUNCH
-Use If you school Block websites
+Use when Block websites
