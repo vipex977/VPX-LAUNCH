@@ -9,12 +9,16 @@
       font-family: 'Segoe UI', sans-serif;
       background-color: #1a1a1a;
       color: #f0f0f0;
+      transition: background-color 0.5s ease;
     }
 
     header {
       background-color: #111;
       padding: 20px;
       text-align: center;
+      opacity: 0;
+      animation: fadeIn 1s forwards 0.5s;
+      position: relative;
     }
 
     header h1 {
@@ -47,11 +51,24 @@
       color: #fff;
     }
 
+    .profile {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: #fff;
+      font-size: 1.1em;
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+    }
+
     .games-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 30px;
       padding: 40px;
+      opacity: 0;
+      animation: fadeIn 1s forwards 1s;
     }
 
     .game-card {
@@ -59,16 +76,11 @@
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      transition: transform 0.3s;
+      transition: transform 0.3s ease-in-out;
     }
 
     .game-card:hover {
       transform: scale(1.03);
-    }
-
-    .game-card img {
-      width: 100%;
-      height: auto;
     }
 
     .game-card h2 {
@@ -112,10 +124,9 @@
       border: none;
     }
 
-    #back-button {
+    #back-button, #fullscreen-button {
       position: absolute;
       top: 15px;
-      right: 20px;
       background-color: #ff3c00;
       color: white;
       border: none;
@@ -126,8 +137,16 @@
       z-index: 9999;
     }
 
-    #back-button:hover {
+    #back-button:hover, #fullscreen-button:hover {
       background-color: #e63200;
+    }
+
+    #back-button {
+      right: 20px;
+    }
+
+    #fullscreen-button {
+      left: 20px;
     }
 
     footer {
@@ -137,16 +156,14 @@
       color: #aaa;
     }
 
-    footer p {
-      margin: 0;
-    }
-
     .login-container {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       background-color: #333;
+      opacity: 0;
+      animation: fadeIn 1s forwards 0.3s;
     }
 
     .login-box {
@@ -156,6 +173,7 @@
       text-align: center;
       width: 300px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.5s forwards 0.3s;
     }
 
     .login-box input {
@@ -183,6 +201,42 @@
     .login-box button:hover {
       background-color: #e63200;
     }
+
+    .welcome-message {
+      font-size: 1.5em;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      animation: fadeIn 1s forwards;
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      0% {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* Timer Animation */
+    .timer {
+      font-size: 1em;
+      color: #fff;
+      margin-top: 10px;
+    }
+
   </style>
 </head>
 <body>
@@ -190,6 +244,7 @@
   <div id="login-screen" class="login-container">
     <div class="login-box">
       <h2>Login</h2>
+      <input type="text" id="username" placeholder="Benutzername" />
       <input type="password" id="password" placeholder="Passwort" />
       <button onclick="login()">Einloggen</button>
     </div>
@@ -202,10 +257,19 @@
       <nav>
         <ul>
           <li><a href="#" onclick="logout()">Ausloggen</a></li>
-          <li><a href="#" onclick="showGames()">Spiele</a></li>
+          <li><a href="#" onclick="showGames()"> own games</a></li>
         </ul>
       </nav>
+      <div class="profile">
+        <p id="profile-name"></p>
+        <p id="profile-time"></p>
+        <p id="timer"></p>
+      </div>
     </header>
+
+    <div class="welcome-message" id="welcome-message" style="display:none;">
+      <p>Willkommen, <span id="user-name"></span>!</p>
+    </div>
 
     <main class="games-grid" id="menu" style="display: none;">
       <div class="game-card">
@@ -276,31 +340,48 @@
     </main>
 
     <div id="game-viewer" style="display: none;">
+      <button id="fullscreen-button" onclick="goFullscreen()">🔳 Vollbild</button>
       <button id="back-button" onclick="closeGame()">⬅ Zurück</button>
       <iframe id="game-iframe" src=""></iframe>
     </div>
   </div>
 
   <script>
-    const correctPassword = "noel1";
-    let loggedIn = false;
+    const allowedUsers = {
+      "mateusz": "pass123",
+      "noel": "noel1"
+    };
+
+    let loginTime = '';
 
     function login() {
+      const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
-      if (password === correctPassword) {
-        loggedIn = true;
+
+      if (allowedUsers[username] && allowedUsers[username] === password) {
+        loginTime = new Date().toLocaleString();
         document.getElementById("login-screen").style.display = "none";
         document.getElementById("app").style.display = "block";
+        document.getElementById("user-name").innerText = username;
+        document.getElementById("profile-name").innerText = `Angemeldet als: ${username}`;
+        showWelcomeMessage(username);
         showGames();
+        startTimer();
       } else {
-        alert("Falsches Passwort!");
+        alert("Benutzername oder Passwort falsch!");
       }
     }
 
+    function showWelcomeMessage(username) {
+      const welcomeMessage = document.getElementById("welcome-message");
+      welcomeMessage.style.display = "block";
+      welcomeMessage.innerHTML = `<p>Willkommen, ${username}!</p>`;
+    }
+
     function logout() {
-      loggedIn = false;
       document.getElementById("login-screen").style.display = "flex";
       document.getElementById("app").style.display = "none";
+      resetTimer();
     }
 
     function showGames() {
@@ -318,11 +399,40 @@
       document.getElementById('game-viewer').style.display = 'none';
       document.getElementById('menu').style.display = 'grid';
     }
+
+    function goFullscreen() {
+      const iframe = document.getElementById('game-iframe');
+      if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+      } else if (iframe.webkitRequestFullscreen) {
+        iframe.webkitRequestFullscreen();
+      } else if (iframe.msRequestFullscreen) {
+        iframe.msRequestFullscreen();
+      }
+    }
+
+    let timerInterval;
+
+    function startTimer() {
+      const timerElement = document.getElementById('timer');
+      timerInterval = setInterval(() => {
+        const currentTime = new Date();
+        const diff = Math.floor((currentTime - new Date(loginTime)) / 1000);
+        const minutes = Math.floor(diff / 60);
+        const seconds = diff % 60;
+        timerElement.textContent = ``;
+      }, 1000);
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      document.getElementById('timer').textContent = '';
+    }
   </script>
 
-<footer>
-  <p>🎮 Von Noel – seit 2025</p>
-</footer>
+  <footer>
+    <p>🎮 Von Noel – seit 2025</p>
+  </footer>
 
 </body>
 </html>
