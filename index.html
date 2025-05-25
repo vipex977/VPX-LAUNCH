@@ -1,6 +1,109 @@
-</html>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Game Launcher</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #1a1a1a;
+      color: #f0f0f0;
+      transition: background-color 0.5s ease;
+    }
 
+    header {
+      background-color: #111;
+      padding: 20px;
+      text-align: center;
+      opacity: 0;
+      animation: fadeIn 1s forwards 0.5s;
+      position: relative;
+    }
 
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+      color: #ff3c00;
+    }
+
+    header img {
+      width: 150px;
+      margin-top: 10px;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    nav ul li a {
+      color: #aaa;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #fff;
+    }
+
+    .profile {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: #fff;
+      font-size: 1.1em;
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+      padding: 40px;
+      opacity: 0;
+      animation: fadeIn 1s forwards 1s;
+    }
+
+    .game-card {
+      background-color: #2a2a2a;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .game-card:hover {
+      transform: scale(1.03);
+    }
+
+    .game-card h2 {
+      padding: 10px 20px 0;
+      font-size: 1.5em;
+      color: #ff5f1f;
+    }
+
+    .game-card p {
+      padding: 10px 20px;
+      font-size: 1em;
+      color: #ccc;
+    }
+
+    .game-card button {
+      margin: 10px 20px 20px;
+      padding: 10px 20px;
+      background-color: #ff3c00;
+      border: none;
+      color: white;
+      font-size: 1em;
+      border-radius: 6px;
+      cursor: pointer;
       transition: background-color 0.3s;
     }
 
@@ -345,4 +448,3 @@
   </footer>
 
 </body>
-</html>
