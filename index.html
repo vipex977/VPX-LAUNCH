@@ -1,29 +1,34 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>VPX Game Launcher</title>
+  <meta charset="UTF-8" />
+  <title>Game Launcher</title>
   <style>
+    /* Grundstyles */
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background-color: #1a1a1a;
       color: #f0f0f0;
+      transition: background-color 0.5s ease, color 0.5s ease;
     }
-
     header {
       background-color: #111;
       padding: 20px;
       text-align: center;
+      opacity: 0;
+      animation: fadeIn 1s forwards 0.5s;
       position: relative;
     }
-
     header h1 {
       margin: 0;
       font-size: 2.5em;
       color: #ff3c00;
     }
-
+    header img {
+      width: 150px;
+      margin-top: 10px;
+    }
     nav ul {
       list-style: none;
       padding: 0;
@@ -32,50 +37,58 @@
       justify-content: center;
       gap: 30px;
     }
-
     nav ul li a {
       color: #aaa;
       text-decoration: none;
       transition: color 0.3s;
+      cursor: pointer;
     }
-
     nav ul li a:hover {
       color: #fff;
     }
-
+    .profile {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: #fff;
+      font-size: 1.1em;
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+      user-select: none;
+    }
     .games-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-      padding: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+      padding: 40px;
+      opacity: 0;
+      animation: fadeIn 1s forwards 1s;
     }
-
     .game-card {
       background-color: #2a2a2a;
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      transition: transform 0.3s;
+      transition: transform 0.3s ease-in-out;
     }
-
     .game-card:hover {
       transform: scale(1.03);
     }
-
     .game-card h2 {
-      padding: 10px;
+      padding: 10px 20px 0;
       font-size: 1.5em;
       color: #ff5f1f;
+      text-transform: capitalize;
     }
-
     .game-card p {
-      padding: 0 10px 10px;
+      padding: 10px 20px;
       font-size: 1em;
       color: #ccc;
+      min-height: 40px;
     }
-
     .game-card button {
-      margin: 10px;
+      margin: 10px 20px 20px;
       padding: 10px 20px;
       background-color: #ff3c00;
       border: none;
@@ -83,109 +96,450 @@
       font-size: 1em;
       border-radius: 6px;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
-
     .game-card button:hover {
       background-color: #e63200;
     }
-
-    #secret-button {
+    #game-viewer {
+      display: none;
+      position: relative;
+      height: 100vh;
+      width: 100%;
+      background-color: #000;
+    }
+    #game-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    #back-button, #fullscreen-button {
       position: absolute;
+      top: 15px;
+      background-color: #ff3c00;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 9999;
+      user-select: none;
+    }
+    #back-button:hover, #fullscreen-button:hover {
+      background-color: #e63200;
+    }
+    #back-button {
+      right: 20px;
+    }
+    #fullscreen-button {
+      left: 20px;
+    }
+    footer {
+      background-color: #111;
+      padding: 20px;
+      text-align: center;
+      color: #aaa;
+      user-select: none;
+    }
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #333;
+      opacity: 0;
+      animation: fadeIn 1s forwards 0.3s;
+      user-select: none;
+    }
+    .login-box {
+      background-color: #444;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      width: 300px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.5s forwards 0.3s;
+    }
+    .login-box input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 6px;
+      background-color: #222;
+      color: #fff;
+      font-size: 1em;
+    }
+    .login-box button {
+      width: 100%;
+      padding: 10px;
+      background-color: #ff3c00;
+      border: none;
+      color: white;
+      font-size: 1em;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .login-box button:hover {
+      background-color: #e63200;
+    }
+    .welcome-message {
+      font-size: 1.5em;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      animation: fadeIn 1s forwards;
+      user-select: none;
+    }
+    @keyframes fadeIn {
+      0% {opacity: 0;}
+      100% {opacity: 1;}
+    }
+    @keyframes slideUp {
+      0% {transform: translateY(50px); opacity: 0;}
+      100% {transform: translateY(0); opacity: 1;}
+    }
+    /* Timer */
+    .timer {
+      font-size: 1em;
+      color: #fff;
+      margin-top: 10px;
+      user-select: none;
+    }
+    /* Unsichtbarer Geheimbutton oben links */
+    #secret-button {
+      position: fixed;
       top: 5px;
       left: 5px;
-      width: 20px;
-      height: 20px;
+      width: 25px;
+      height: 25px;
       background: transparent;
       border: none;
       cursor: pointer;
+      z-index: 10000;
+      opacity: 0; /* komplett unsichtbar */
+      transition: opacity 0.3s;
+    }
+    #secret-button:hover {
+      opacity: 0.2; /* leicht sichtbar beim Hover */
+      background-color: #ff3c00;
+      border-radius: 50%;
+    }
+    #secret-tooltip {
+      position: fixed;
+      top: 35px;
+      left: 5px;
+      background-color: #ff3c00;
+      color: #000;
+      padding: 3px 8px;
+      font-size: 0.75em;
+      border-radius: 5px;
       opacity: 0;
+      pointer-events: none;
+      user-select: none;
+      transition: opacity 0.3s;
+      z-index: 10001;
+    }
+    #secret-button:hover + #secret-tooltip {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    /* Darkmode Toggle */
+    #darkmode-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #ff3c00;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 1em;
+      cursor: pointer;
+      color: white;
+      z-index: 10000;
+      user-select: none;
+      box-shadow: 0 0 10px #ff3c00;
+      transition: background-color 0.3s ease;
+    }
+    #darkmode-toggle:hover {
+      background-color: #e63200;
+    }
+    body.darkmode {
+      background-color: #f0f0f0;
+      color: #1a1a1a;
+    }
+    body.darkmode header {
+      background-color: #ddd;
+      color: #ff3c00;
+    }
+    body.darkmode footer {
+      background-color: #ddd;
+      color: #555;
+    }
+    body.darkmode .game-card {
+      background-color: #eee;
+      color: #333;
+    }
+    body.darkmode .game-card h2 {
+      color: #d44f00;
+    }
+    body.darkmode nav ul li a {
+      color: #555;
+    }
+    body.darkmode nav ul li a:hover {
+      color: #ff3c00;
+    }
+    body.darkmode #back-button,
+    body.darkmode #fullscreen-button,
+    body.darkmode #darkmode-toggle {
+      background-color: #d44f00;
+      color: #fff;
+    }
+    body.darkmode #back-button:hover,
+    body.darkmode #fullscreen-button:hover,
+    body.darkmode #darkmode-toggle:hover {
+      background-color: #a83800;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <button id="secret-button" onclick="window.location.href='https://www.whitescreen.online/fake-windows-10-update-screen/'"></button>
-    <h1>🔥 VPX Game Launcher</h1>
-    <nav>
-      <ul>
-        <li><a href="#">Start</a></li>
-        <li><a href="#">Spiele</a></li>
-        <li><a href="#">Über uns</a></li>
-      </ul>
-    </nav>
-  </header>
+  <!-- Unsichtbarer "Geheim"-Button oben links -->
+  <button id="secret-button" aria-label="Geheime Update-Seite"></button>
+  <div id="secret-tooltip">Geheimer Bereich</div>
 
-  <main class="games-grid">
-    <!-- Spielekarten -->
-    <div class="game-card">
-      <h2>Moto X3M</h2>
-      <p>Motorrad-Stuntspiel</p>
-      <button onclick="openInIframe('https://html5.gamedistribution.com/5b0abd4c0faa4f5eb190a9a16d5a1b4c')">Starten</button>
+  <!-- Login Screen -->
+  <div id="login-screen" class="login-container">
+    <div class="login-box">
+      <h2>Login</h2>
+      <input type="text" id="username" placeholder="Benutzername" autocomplete="username" />
+      <input type="password" id="password" placeholder="Passwort" autocomplete="current-password" />
+      <button id="login-button">Einloggen</button>
+    </div>
+  </div>
+
+  <!-- Haupt App -->
+  <div id="app" style="display:none;">
+    <header>
+      <img src="https://th.bing.com/th/id/OIP.uSTZLdlo25FJrAvdpxynFwHaHa?rs=1&pid=ImgDetMain" alt="Logo" />
+      <h1>🔥 Game Launcher</h1>
+      <nav>
+        <ul>
+          <li><a href="#" id="logout-link">Ausloggen</a></li>
+          <li><a href="#" id="show-games-link">Own Games</a></li>
+          <!-- Externe Links, öffnen im neuen Tab -->
+          <li><a href="https://m.youtube.com/" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+          <li><a href="https://spotify.com" target="_blank" rel="noopener noreferrer">Spotify</a></li>
+          <li><a href="https://chatgpt.com" target="_blank" rel="noopener noreferrer">ChatGPT</a></li>
+          <li><a href="https://google.com" target="_blank" rel="noopener noreferrer">Google</a></li>
+          <li><a href="https://gameupco.github.io/game-up/" target="_blank" rel="noopener noreferrer">GameUp</a></li>
+        </ul>
+      </nav>
+      <div class="profile" aria-live="polite">
+        <p id="profile-name"></p>
+        <p id="profile-time"></p>
+        <p id="timer" class="timer"></p>
+      </div>
+    </header>
+
+    <div class="welcome-message" id="welcome-message" style="display:none;">
+      <p>Willkommen, <span id="user-name"></span>!</p>
     </div>
 
-    <div class="game-card">
-      <h2>Paper.io</h2>
-      <p>Gebietsübernahme in Echtzeit</p>
-      <button onclick="openInIframe('https://html5.gamedistribution.com/c5d4966b176246748d6c847103ebfd51')">Starten</button>
-    </div>
+    <main class="games-grid" id="menu" style="display: none;">
+      <div class="game-card">
+        <h2>Moto X3M</h2>
+        <p>Erlebe adrenalingeladene Motorrad-Stunts!</p>
+        <button onclick="openGame('https://html5.gamedistribution.com/5b0abd4c0faa4f5eb190a9a16d5a1b4c/?gd_sdk_referrer_url=https%3A%2F%2Fwww.1001spiele.at%2Fg%2Fmoto-x3m')">Starten</button>
+      </div>
+      <div class="game-card">
+        <h2>Paper.io</h2>
+        <p>Kontrolliere dein Gebiet und besiege andere Spieler!</p>
+        <button onclick="openGame('https://html5.gamedistribution.com/c5d4966b176246748d6c847103ebfd51/?gd_sdk_referrer_url=https%3A%2F%2Fwww.1001spiele.at%2Fg%2Fpaper-io-2')">Starten</button>
+      </div>
+      <div class="game-card">
+        <h2>Subway Surfers</h2>
+        <p>Springe und rolle durch die U-Bahn-Strecken!</p>
+        <button onclick="openGame('https://subway-surfers.org/world-tour/')">Starten</button>
+      </div>
+      <div class="game-card">
+        <h2>Geometry Dash</h2>
+        <p>Überwinde rhythmische Hindernisse im Takt der Musik!</p>
+        <button onclick="openGame('https://html5.gamedistribution.com/9ee26ba4405c456094c70af7dc31a524/?gd_sdk_referrer_url=https%3A%2F%2Fwww.1001spiele.at%2Fg%2Fgeometry-arrow')">Starten</button>
+      </div>
+      <div class="game-card">
+        <h2>Helix Jump</h2>
+        <p>Springe durch die labyrinthartigen Turmspiralen!</p>
+        <button onclick="openGame('https://html5.gamedistribution.com/f91f20eb43ec466cae097621dc6a6b7e/?gd_sdk_referrer_url=https%3A%2F%2Fwww.1001spiele.at%2Fg%2Fhelix-jump')">Starten</button>
+      </div>
+      <div class="game-card">
+        <h2>Clash of Clans</h2>
+        <p>Baue dein Dorf auf und kämpfe gegen andere!</p>
+        <button onclick="openGame('https://supercell.com/en/games/clashofclans/')">Starten</button>
+      </div>
+    </main>
 
-    <div class="game-card">
-      <h2>Subway Surfers</h2>
-      <p>U-Bahn Abenteuer</p>
-      <button onclick="openInIframe('https://subway-surfers.org/world-tour/')">Starten</button>
-    </div>
+    <section id="game-viewer">
+      <iframe id="game-iframe" allowfullscreen></iframe>
+      <button id="fullscreen-button" title="Vollbild">Fullscreen</button>
+      <button id="back-button" title="Zurück zum Menü">Zurück</button>
+    </section>
 
-    <div class="game-card">
-      <h2>WhatsApp</h2>
-      <p>Chat Messenger</p>
-      <button onclick="openInNewTab('https://web.whatsapp.com')">Öffnen</button>
-    </div>
+    <footer>
+      &copy; 2025 Game Launcher - made with ❤️
+    </footer>
+  </div>
 
-    <div class="game-card">
-      <h2>Spotify</h2>
-      <p>Musikstreaming</p>
-      <button onclick="openInNewTab('https://open.spotify.com')">Öffnen</button>
-    </div>
+  <button id="darkmode-toggle" aria-pressed="false">Dark Mode</button>
 
-    <div class="game-card">
-      <h2>Discord</h2>
-      <p>Voice und Text Chat</p>
-      <button onclick="openInNewTab('https://discord.com/app')">Öffnen</button>
-    </div>
+<script>
+  // Elemente
+  const loginScreen = document.getElementById('login-screen');
+  const app = document.getElementById('app');
+  const loginButton = document.getElementById('login-button');
+  const usernameInput = document.getElementById('username');
+  const passwordInput = document.getElementById('password');
+  const profileName = document.getElementById('profile-name');
+  const profileTime = document.getElementById('profile-time');
+  const timerEl = document.getElementById('timer');
+  const welcomeMessage = document.getElementById('welcome-message');
+  const userNameDisplay = document.getElementById('user-name');
+  const menu = document.getElementById('menu');
+  const gameViewer = document.getElementById('game-viewer');
+  const gameIframe = document.getElementById('game-iframe');
+  const backButton = document.getElementById('back-button');
+  const fullscreenButton = document.getElementById('fullscreen-button');
+  const logoutLink = document.getElementById('logout-link');
+  const showGamesLink = document.getElementById('show-games-link');
+  const secretButton = document.getElementById('secret-button');
+  const darkmodeToggle = document.getElementById('darkmode-toggle');
+  const secretTooltip = document.getElementById('secret-tooltip');
 
-    <div class="game-card">
-      <h2>YouTube</h2>
-      <p>Videos ansehen</p>
-      <button onclick="openInNewTab('https://www.youtube.com')">Öffnen</button>
-    </div>
+  let loginTime = null;
+  let timerInterval = null;
 
-    <div class="game-card">
-      <h2>ChatGPT</h2>
-      <p>Künstliche Intelligenz</p>
-      <button onclick="openInNewTab('https://chat.openai.com')">Öffnen</button>
-    </div>
+  // Login Funktion (sehr simpel, Beispielhaft)
+  loginButton.addEventListener('click', () => {
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
 
-    <!-- Weitere Games hier hinzufügen -->
-  </main>
-
-  <iframe id="game-frame" style="width: 100%; height: 90vh; display: none; border: none;"></iframe>
-
-  <script>
-    function openInIframe(url) {
-      document.getElementById('game-frame').src = url;
-      document.getElementById('game-frame').style.display = 'block';
-      window.scrollTo({ top: document.getElementById('game-frame').offsetTop, behavior: 'smooth' });
+    if (username && password) {
+      // Hier könnte echte Auth passieren
+      login(username);
+    } else {
+      alert('Bitte Benutzername und Passwort eingeben!');
     }
+  });
 
-    function openInNewTab(url) {
-      window.open(url, '_blank');
+  // Enter-Taste in Inputs triggert Login
+  [usernameInput, passwordInput].forEach(input => {
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        loginButton.click();
+      }
+    });
+  });
+
+  function login(username) {
+    loginScreen.style.display = 'none';
+    app.style.display = 'block';
+    profileName.textContent = `Benutzer: ${username}`;
+    userNameDisplay.textContent = username;
+    welcomeMessage.style.display = 'block';
+    menu.style.display = 'grid';
+    loginTime = Date.now();
+    updateProfileTime();
+    startTimer();
+  }
+
+  // Timer aktualisieren
+  function updateProfileTime() {
+    const now = new Date();
+    profileTime.textContent = `Uhrzeit: ${now.toLocaleTimeString()}`;
+  }
+
+  function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      const elapsedMs = Date.now() - loginTime;
+      timerEl.textContent = 'Login seit: ' + msToTime(elapsedMs);
+      updateProfileTime();
+    }, 1000);
+  }
+
+  function msToTime(duration) {
+    let seconds = Math.floor((duration / 1000) % 60);
+    let minutes = Math.floor((duration / (1000 * 60)) % 60);
+    let hours = Math.floor(duration / (1000 * 60 * 60));
+    return `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+  }
+
+  // Spiele öffnen
+  function openGame(url) {
+    menu.style.display = 'none';
+    gameViewer.style.display = 'block';
+    gameIframe.src = url;
+  }
+
+  backButton.addEventListener('click', () => {
+    gameIframe.src = '';
+    gameViewer.style.display = 'none';
+    menu.style.display = 'grid';
+  });
+
+  fullscreenButton.addEventListener('click', () => {
+    if (document.fullscreenEnabled) {
+      if (!document.fullscreenElement) {
+        gameViewer.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    } else {
+      alert('Vollbildmodus wird von deinem Browser nicht unterstützt.');
     }
-  </script>
+  });
 
-  <footer style="text-align:center; padding: 20px; background-color:#111; color:#999;">
-    Von Noel – Für alle, die in der Schule nicht zocken dürfen. 😎
-  </footer>
+  // Logout mit Bestätigung
+  logoutLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (confirm('Willst du dich wirklich ausloggen?')) {
+      logout();
+    }
+  });
+
+  function logout() {
+    // Reset
+    clearInterval(timerInterval);
+    loginScreen.style.display = 'flex';
+    app.style.display = 'none';
+    usernameInput.value = '';
+    passwordInput.value = '';
+  }
+
+  // Show Games Link (öffnet Own Games Sektion)
+  showGamesLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    gameViewer.style.display = 'none';
+    menu.style.display = 'grid';
+  });
+
+  // Geheimer Button öffnet Update Seite in neuem Tab
+  secretButton.addEventListener('click', () => {
+    window.open('https://gameupco.github.io/game-up/', '_blank', 'noopener');
+  });
+
+  // Darkmode Toggle
+  darkmodeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('darkmode');
+    const isDark = document.body.classList.contains('darkmode');
+    darkmodeToggle.setAttribute('aria-pressed', isDark.toString());
+    darkmodeToggle.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+  });
+
+  // Initial
+  updateProfileTime();
+</script>
 
 </body>
 </html>
