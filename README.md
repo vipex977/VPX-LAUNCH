@@ -7,8 +7,7 @@ Ideal für Schulen, Freunde oder Gruppen mit eingeschränktem Internetzugriff.
 
 ---
 
-## 📥 Installation & Nutzung                                        ![image](https://github.com/user-attachments/assets/314491f5-3261-4b75-8514-c39d9feeec3c)
-
+## 📥 Installation & Nutzung 
 
 ### 🔸 Variante 1: Mit DuckDuckGo-Browser (empfohlen für Schulen)
 
@@ -30,4 +29,9 @@ Der Launcher funktioniert auch in normalen Browsern, aber:
 
 Direktlink:
 ```text
-https://vipex977.github.io/VPX-LAUNCH/
+https://vipex977.github.io/VPX-LAUNCH/´´´
+
+![image](https://github.com/user-attachments/assets/5338f92a-5084-4e7d-b7ab-854c2aae6b31)
+
+
+
