@@ -1,4 +1,4 @@
-# 🚀 VPX-LAUNCH
+# 🚀 VPX-LAUNCH 
 
 > **Von Noel** – für alle, die Webseiten wie Spiele oder Dienste auch dann nutzen wollen, wenn sie z. B. **in der Schule gesperrt sind**.
 
@@ -7,7 +7,8 @@ Ideal für Schulen, Freunde oder Gruppen mit eingeschränktem Internetzugriff.
 
 ---
 
-## 📥 Installation & Nutzung
+## 📥 Installation & Nutzung                                        ![image](https://github.com/user-attachments/assets/314491f5-3261-4b75-8514-c39d9feeec3c)
+
 
 ### 🔸 Variante 1: Mit DuckDuckGo-Browser (empfohlen für Schulen)
 
