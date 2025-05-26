@@ -29,7 +29,8 @@ Der Launcher funktioniert auch in normalen Browsern, aber:
 
 Direktlink:
 ```text
-https://vipex977.github.io/VPX-LAUNCH/´´´
+https://vipex977.github.io/VPX-LAUNCH/
+```
 
 ![image](https://github.com/user-attachments/assets/5338f92a-5084-4e7d-b7ab-854c2aae6b31)
 
