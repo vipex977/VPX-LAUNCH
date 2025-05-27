@@ -410,7 +410,6 @@
   <button id="darkmode-toggle" aria-pressed="false">Dark Mode</button>
 
 <script>
-  // Elemente
   const loginScreen = document.getElementById('login-screen');
   const app = document.getElementById('app');
   const loginButton = document.getElementById('login-button');
@@ -430,25 +429,35 @@
   const showGamesLink = document.getElementById('show-games-link');
   const secretButton = document.getElementById('secret-button');
   const darkmodeToggle = document.getElementById('darkmode-toggle');
-  const secretTooltip = document.getElementById('secret-tooltip');
 
   let loginTime = null;
   let timerInterval = null;
 
-  // Login Funktion (sehr simpel, Beispielhaft)
-  loginButton.addEventListener('click', () => {
-    const username = usernameInput.value.trim();
-    const password = passwordInput.value.trim();
+ const users = {
+  "Owner": "K4mpfsucht",
+  "suchen": "mt12",
+  "izzy": "izzy",
+  "gast": "gast1",
+  "tester": "test"
+};
 
-function login(username) {
+loginButton.addEventListener('click', () => {
+  const username = usernameInput.value.trim();
   const password = passwordInput.value.trim();
 
-  const validUsers = {
-    owner: "K4mpfsucht",
-    guestg: "guest1"
-  };
+  if (!username || !password) {
+    alert('Bitte Benutzername und Passwort eingeben!');
+    return;
+  }
 
-  if (validUsers[username] && validUsers[username] === password) {
+  if (users[username] && users[username] === password) {
+    login(username);
+  } else {
+    alert('Benutzername oder Passwort ist falsch!');
+  }
+});
+
+  function login(username) {
     loginScreen.style.display = 'none';
     app.style.display = 'block';
     profileName.textContent = `Benutzer: ${username}`;
@@ -458,13 +467,8 @@ function login(username) {
     loginTime = Date.now();
     updateProfileTime();
     startTimer();
-  } else {
-    alert('Benutzername oder Passwort ist falsch!');
   }
-}
 
-
-  // Timer aktualisieren
   function updateProfileTime() {
     const now = new Date();
     profileTime.textContent = `Uhrzeit: ${now.toLocaleTimeString()}`;
@@ -483,10 +487,9 @@ function login(username) {
     let seconds = Math.floor((duration / 1000) % 60);
     let minutes = Math.floor((duration / (1000 * 60)) % 60);
     let hours = Math.floor(duration / (1000 * 60 * 60));
-    return `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 
-  // Spiele öffnen
   function openGame(url) {
     menu.style.display = 'none';
     gameViewer.style.display = 'block';
@@ -511,7 +514,6 @@ function login(username) {
     }
   });
 
-  // Logout mit Bestätigung
   logoutLink.addEventListener('click', (e) => {
     e.preventDefault();
     if (confirm('Willst du dich wirklich ausloggen?')) {
@@ -520,7 +522,6 @@ function login(username) {
   });
 
   function logout() {
-    // Reset
     clearInterval(timerInterval);
     loginScreen.style.display = 'flex';
     app.style.display = 'none';
@@ -528,19 +529,16 @@ function login(username) {
     passwordInput.value = '';
   }
 
-  // Show Games Link (öffnet Own Games Sektion)
   showGamesLink.addEventListener('click', (e) => {
     e.preventDefault();
     gameViewer.style.display = 'none';
     menu.style.display = 'grid';
   });
 
-  // Geheimer Button öffnet Update Seite in neuem Tab
   secretButton.addEventListener('click', () => {
     window.open('https://updatefaker.com/windows10/index.html', '_blank', 'noopener');
   });
 
-  // Darkmode Toggle
   darkmodeToggle.addEventListener('click', () => {
     document.body.classList.toggle('darkmode');
     const isDark = document.body.classList.contains('darkmode');
@@ -548,9 +546,8 @@ function login(username) {
     darkmodeToggle.textContent = isDark ? 'Light Mode' : 'Dark Mode';
   });
 
-  // Initial
   updateProfileTime();
 </script>
 
 </body>
-</html>
+</html> 
