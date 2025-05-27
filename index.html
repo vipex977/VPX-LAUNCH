@@ -440,24 +440,15 @@
     const username = usernameInput.value.trim();
     const password = passwordInput.value.trim();
 
-    if (username && password) {
-      // Hier könnte echte Auth passieren
-      login(username);
-    } else {
-      alert('Bitte Benutzername und Passwort eingeben!');
-    }
-  });
+function login(username) {
+  const password = passwordInput.value.trim();
 
-  // Enter-Taste in Inputs triggert Login
-  [usernameInput, passwordInput].forEach(input => {
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        loginButton.click();
-      }
-    });
-  });
+  const validUsers = {
+    owner: "K4mpfsucht",
+    guestg: "guest1"
+  };
 
-  function login(username) {
+  if (validUsers[username] && validUsers[username] === password) {
     loginScreen.style.display = 'none';
     app.style.display = 'block';
     profileName.textContent = `Benutzer: ${username}`;
@@ -467,7 +458,11 @@
     loginTime = Date.now();
     updateProfileTime();
     startTimer();
+  } else {
+    alert('Benutzername oder Passwort ist falsch!');
   }
+}
+
 
   // Timer aktualisieren
   function updateProfileTime() {
